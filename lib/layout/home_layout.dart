@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:todo_app/component/bottom_sheet.dart';
-import 'package:todo_app/component/task_tile.dart';
 import 'package:todo_app/cubit/cubit.dart';
 import 'package:todo_app/cubit/states.dart';
+import 'package:todo_app/shared/component/bottom_sheet.dart';
+import 'package:todo_app/shared/component/task_tile.dart';
+import 'package:todo_app/shared/style/colors.dart';
 
 class HomeLayout extends StatelessWidget {
   const HomeLayout({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<AppCubit, AppStates>(
@@ -14,13 +16,13 @@ class HomeLayout extends StatelessWidget {
       builder: (context, state) {
         AppCubit cubit = AppCubit.get(context);
         return Scaffold(
-          backgroundColor: Colors.teal[400],
+          backgroundColor: primaryColor,
 
           //add a new task (FAB)
           floatingActionButtonLocation:
               FloatingActionButtonLocation.centerFloat,
           floatingActionButton: FloatingActionButton(
-            backgroundColor: Colors.indigo[600],
+            backgroundColor: secondaryColor,
             onPressed: () {
               showModalBottomSheet(
                 context: context,
@@ -53,6 +55,7 @@ class HomeLayout extends StatelessWidget {
                     Icon(
                       Icons.done_all_outlined,
                       size: 30,
+                      color: Colors.white,
                     ),
                     SizedBox(
                       width: 10,
@@ -60,7 +63,12 @@ class HomeLayout extends StatelessWidget {
                     Text(
                       'What ToDo',
                       style:
-                          TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                          TextStyle(
+                              fontSize: 30,
+                              fontWeight: FontWeight.w900,
+                              color: Colors.white,
+                              fontFamily: 'jannah'
+                          ),
                     ),
                   ],
                 ),
@@ -73,68 +81,71 @@ class HomeLayout extends StatelessWidget {
                   children: [
                     Text(
                       '${cubit.tasksData.length} tasks',
-                      style: const TextStyle(fontWeight: FontWeight.bold),
+                      style: const TextStyle(fontWeight: FontWeight.bold,color: Colors.white),
                     ),
                     const Spacer(),
-                    cubit.tasksData.isEmpty
-                        ? const Text(
-                            'clear all',
+                    SizedBox(
+                      height: 25,
+                      child: MaterialButton(
+                           color: secondaryColor,
+                          onPressed: () {
+                            showDialog(
+
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                      content: const Text(
+                                          'are you sure you want to delete all todos?'),
+                                      actions: [
+                                        MaterialButton(
+                                          height: 30,
+                                          color:Colors.red,
+                                            onPressed: () {
+                                              cubit.deleteAllFromDatabase();
+                                              Navigator.pop(context);
+                                            },
+                                            child: const Text(
+                                              'delete',
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold),
+                                            )),
+                                        MaterialButton(
+                                          height: 30,
+                                            color:secondaryColor,
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                            child: const Text(
+                                              'Cancel',
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold),
+                                            ))
+                                      ],
+                                    ));
+                          },
+                          child:const Text(
+                            'delete',
                             style: TextStyle(
-                                color: Colors.grey,
+                                color: Colors.white,
                                 fontWeight: FontWeight.bold),
-                          )
-                        : InkWell(
-                            onTap: () {
-                              showDialog(
-                                  context: context,
-                                  builder: (context) => AlertDialog(
-                                        content: const Text(
-                                            'are you sure you want to clear all todos?'),
-                                        actions: [
-                                          TextButton(
-                                              onPressed: () {
-                                                cubit.deleteAllFromDatabase();
-                                                Navigator.pop(context);
-                                              },
-                                              child: const Text(
-                                                'Ok',
-                                                style: TextStyle(
-                                                    color: Colors.red,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              )),
-                                          TextButton(
-                                              onPressed: () {
-                                                Navigator.pop(context);
-                                              },
-                                              child: Text(
-                                                'Cancel',
-                                                style: TextStyle(
-                                                    color: Colors.indigo[500],
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ))
-                                        ],
-                                      ));
-                            },
-                            child: Text(
-                              'clear all',
-                              style: TextStyle(
-                                  color: Colors.indigo[600],
-                                  fontWeight: FontWeight.bold),
-                            )),
+                          )),
+                    ),
+                    const SizedBox(
+                      width: 5.0,
+                    )
                   ],
                 ),
 
                 //tasks list
                 Expanded(
                   child: Padding(
-                    padding: const EdgeInsets.only(bottom: 35.0, top: 15),
+                    padding: const EdgeInsets.only(bottom: 35.0, top: 10),
                     child: Container(
                       width: double.infinity,
                       decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.circular(15.0)),
+                          borderRadius: BorderRadius.circular(10.0)),
                       child: cubit.tasksData.isEmpty
                           ?
                           //if there is no tasks

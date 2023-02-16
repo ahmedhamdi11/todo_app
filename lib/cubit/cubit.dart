@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:todo_app/component/bottom_sheet.dart';
 import 'package:todo_app/cubit/states.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:todo_app/shared/component/bottom_sheet.dart';
 
 class AppCubit extends Cubit<AppStates> {
   AppCubit() : super(InitialState());
@@ -13,11 +13,11 @@ class AppCubit extends Cubit<AppStates> {
 ////////////////
   void changeCheckBoxValue(index) {
     if (tasksData[index]['status'] == 'new') {
-      updatTaskStautsInDatabase(
+      updateTaskStatusInDatabase(
           newTaskStatus: 'done', id: tasksData[index]['id']);
       emit(CheckBoxChangedState());
     } else {
-      updatTaskStautsInDatabase(
+      updateTaskStatusInDatabase(
           newTaskStatus: 'new', id: tasksData[index]['id']);
       emit(CheckBoxChangedState());
     }
@@ -37,9 +37,7 @@ class AppCubit extends Cubit<AppStates> {
       },
     ).then((value) {
       tasksDatabase = value;
-      emit(CreateDatabaseSucsessState());
-    }).catchError((error) {
-      print('create error:$error');
+      emit(CreateDatabaseSuccessState());
     });
   }
 
@@ -50,7 +48,7 @@ class AppCubit extends Cubit<AppStates> {
       value.forEach((e) {
         tasksData.add(e);
       });
-      emit(GetDataSucsessState());
+      emit(GetDataSuccessState());
     }).catchError((error) {
       emit(GetDataErrorState());
     });
@@ -85,7 +83,7 @@ class AppCubit extends Cubit<AppStates> {
   }
 
 ///////////////////
-  void updatTaskContentInDatabase({
+  void updateTaskContentInDatabase({
     required String newTaskContent,
     required int id,
   }) async {
@@ -96,7 +94,7 @@ class AppCubit extends Cubit<AppStates> {
   }
 
 /////////////////
-  void updatTaskStautsInDatabase({
+  void updateTaskStatusInDatabase({
     required String newTaskStatus,
     required int id,
   }) async {
@@ -120,7 +118,7 @@ class AppCubit extends Cubit<AppStates> {
           buttonText: 'update',
           sheetTitle: 'Update Task',
           buttonFunction: () {
-            updatTaskContentInDatabase(
+            updateTaskContentInDatabase(
               id: taskId,
               newTaskContent: controller.text,
             );

@@ -2,9 +2,9 @@ abstract class AppStates {}
 
 class InitialState extends AppStates {}
 
-class CreateDatabaseSucsessState extends AppStates {}
+class CreateDatabaseSuccessState extends AppStates {}
 
-class GetDataSucsessState extends AppStates {}
+class GetDataSuccessState extends AppStates {}
 
 class GetDataErrorState extends AppStates {}
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:todo_app/shared/style/colors.dart';
 
 class TasksTile extends StatelessWidget {
   final String taskContent;
@@ -33,7 +34,7 @@ class TasksTile extends StatelessWidget {
           SlidableAction(
             onPressed: editTask,
             backgroundColor: Colors.grey[100]!,
-            foregroundColor: const Color(0xFF21B7CA),
+            foregroundColor: primaryColor,
             icon: Icons.edit,
             borderRadius: BorderRadius.circular(15.0),
           ),
@@ -46,7 +47,7 @@ class TasksTile extends StatelessWidget {
               borderRadius: BorderRadius.circular(15.0)),
           child: Row(children: [
             Checkbox(
-              activeColor: Colors.teal[400],
+              activeColor: primaryColor,
               value: checkBoxValue,
               onChanged: onChangingCheckBox,
             ),
