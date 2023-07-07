@@ -1,125 +1,65 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todo_app/cubit/states.dart';
-import 'package:sqflite/sqflite.dart';
-import 'package:todo_app/shared/component/bottom_sheet.dart';
+import 'package:todo_app/sql_database.dart/sql_database.dart';
 
 class AppCubit extends Cubit<AppStates> {
   AppCubit() : super(InitialState());
-  static AppCubit get(context) => BlocProvider.of(context);
 
-  late Database tasksDatabase;
   List<Map> tasksData = [];
-////////////////
+  SqlDatabase sqlDatabase = SqlDatabase();
+
   void changeCheckBoxValue(index) {
     if (tasksData[index]['status'] == 'new') {
-      updateTaskStatusInDatabase(
-          newTaskStatus: 'done', id: tasksData[index]['id']);
-      emit(CheckBoxChangedState());
+      updatTaskStatus(newStatus: 'done', id: tasksData[index]['id']);
+      getData();
     } else {
-      updateTaskStatusInDatabase(
-          newTaskStatus: 'new', id: tasksData[index]['id']);
-      emit(CheckBoxChangedState());
+      updatTaskStatus(newStatus: 'new', id: tasksData[index]['id']);
+      getData();
     }
   }
 
-///////////////
-  void createDatabase() {
-    openDatabase(
-      'what_todo.db',
-      version: 1,
-      onCreate: (db, version) {
-        db.execute(
-            'CREATE TABLE TASKS (id INTEGER PRIMARY KEY,task TEXT,status TEXT)');
-      },
-      onOpen: (db) async {
-        await getDataFromDatabase(db);
-      },
-    ).then((value) {
-      tasksDatabase = value;
-      emit(CreateDatabaseSuccessState());
-    });
+  updatTaskStatus({required String newStatus, required int id}) async {
+    await sqlDatabase.updateTaskStatus(newStatus: newStatus, id: id);
   }
 
-/////////////////
-  Future getDataFromDatabase(database) async {
+  getData() async {
+    emit(GetDataLoadingState());
     tasksData = [];
-    return await database.rawQuery('SELECT * FROM TASKS').then((value) {
-      value.forEach((e) {
-        tasksData.add(e);
-      });
-      emit(GetDataSuccessState());
-    }).catchError((error) {
-      emit(GetDataErrorState());
-    });
+    List<Map> response = await sqlDatabase.getData();
+    tasksData.addAll(response);
+    emit(GetDataSuccessState());
   }
 
-////////////////////
-  void insertToDatabase({
-    required String taskContent,
-  }) {
-    tasksDatabase.transaction((txn) {
-      return txn
-          .rawInsert(
-              'INSERT INTO TASKS (task,status) VALUES("$taskContent", "new")')
-          .then((value) {
-        getDataFromDatabase(tasksDatabase);
-      });
-    });
+  insertData({required String taskTitle}) async {
+    emit(InsertDataLoadingState());
+    int response = await sqlDatabase.insertData(taskTitle: taskTitle);
+    if (response > 0) {
+      emit(InsertDataSuccessState());
+      getData();
+    } else {
+      emit(InsertDataErrorState());
+    }
   }
 
-///////////////
-  void deleteFromDatabase(id) async {
-    await tasksDatabase
-        .rawDelete('DELETE FROM TASKS WHERE id=?', [id]).then((value) {
-      getDataFromDatabase(tasksDatabase);
-    });
+  updateData({required String taskTitle, required int id}) async {
+    emit(InsertDataLoadingState());
+    int response = await sqlDatabase.updateData(newTitle: taskTitle, id: id);
+    if (response > 0) {
+      emit(InsertDataSuccessState());
+      getData();
+    } else {
+      emit(InsertDataErrorState());
+    }
   }
 
-///////////////////
-  void updateTaskContentInDatabase({
-    required String newTaskContent,
-    required int id,
-  }) async {
-    await tasksDatabase.rawUpdate('UPDATE TASKS SET task = ? WHERE id = ?',
-        [newTaskContent, id]).then((value) {
-      getDataFromDatabase(tasksDatabase);
-    });
-  }
-
-/////////////////
-  void updateTaskStatusInDatabase({
-    required String newTaskStatus,
-    required int id,
-  }) async {
-    await tasksDatabase.rawUpdate('UPDATE TASKS SET status = ? WHERE id = ?',
-        [newTaskStatus, id]).then((value) {
-      getDataFromDatabase(tasksDatabase);
-    });
-  }
-
-  //////////////
-  void editTask({
-    String? tFormFieldHint,
-    required BuildContext context,
-    required TextEditingController controller,
-    required int taskId,
-  }) {
-    showModalBottomSheet(
-      context: context,
-      builder: (context) => addOrEditTaskScreen(
-          tFormFieldHint: tFormFieldHint,
-          buttonText: 'update',
-          sheetTitle: 'Update Task',
-          buttonFunction: () {
-            updateTaskContentInDatabase(
-              id: taskId,
-              newTaskContent: controller.text,
-            );
-            controller.clear();
-            Navigator.pop(context);
-          },
-          context: context),
-    );
+  deleteData({required int id}) async {
+    emit(InsertDataLoadingState());
+    int response = await sqlDatabase.deleteData(id: id);
+    if (response > 0) {
+      emit(InsertDataSuccessState());
+      tasksData.removeWhere((e) => e['id'] == id);
+    } else {
+      emit(InsertDataErrorState());
+    }
   }
 }

@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => AppCubit()..createDatabase(),
+      create: (context) => AppCubit()..getData(),
       child: MaterialApp(
         theme: ThemeData(fontFamily: 'jannah', primarySwatch: Colors.teal),
         title: 'todo_app',
