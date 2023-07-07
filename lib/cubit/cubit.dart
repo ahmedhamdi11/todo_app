@@ -76,12 +76,6 @@ class AppCubit extends Cubit<AppStates> {
     });
   }
 
-  void deleteAllFromDatabase() async {
-    await tasksDatabase.rawDelete('DELETE FROM TASKS').then((value) {
-      getDataFromDatabase(tasksDatabase);
-    });
-  }
-
 ///////////////////
   void updateTaskContentInDatabase({
     required String newTaskContent,

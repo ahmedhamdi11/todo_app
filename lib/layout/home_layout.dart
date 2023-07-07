@@ -50,8 +50,8 @@ class HomeLayout extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 //App Title (What ToDo)
-                Row(
-                  children: const [
+                const Row(
+                  children: [
                     Icon(
                       Icons.done_all_outlined,
                       size: 30,
@@ -62,13 +62,11 @@ class HomeLayout extends StatelessWidget {
                     ),
                     Text(
                       'What ToDo',
-                      style:
-                          TextStyle(
-                              fontSize: 30,
-                              fontWeight: FontWeight.w900,
-                              color: Colors.white,
-                              fontFamily: 'jannah'
-                          ),
+                      style: TextStyle(
+                          fontSize: 30,
+                          fontWeight: FontWeight.w900,
+                          color: Colors.white,
+                          fontFamily: 'jannah'),
                     ),
                   ],
                 ),
@@ -77,64 +75,10 @@ class HomeLayout extends StatelessWidget {
                 ),
 
                 // number of tasks
-                Row(
-                  children: [
-                    Text(
-                      '${cubit.tasksData.length} tasks',
-                      style: const TextStyle(fontWeight: FontWeight.bold,color: Colors.white),
-                    ),
-                    const Spacer(),
-                    SizedBox(
-                      height: 25,
-                      child: MaterialButton(
-                           color: secondaryColor,
-                          onPressed: () {
-                            showDialog(
-
-                                context: context,
-                                builder: (context) => AlertDialog(
-                                      content: const Text(
-                                          'are you sure you want to delete all todos?'),
-                                      actions: [
-                                        MaterialButton(
-                                          height: 30,
-                                          color:Colors.red,
-                                            onPressed: () {
-                                              cubit.deleteAllFromDatabase();
-                                              Navigator.pop(context);
-                                            },
-                                            child: const Text(
-                                              'delete',
-                                              style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.bold),
-                                            )),
-                                        MaterialButton(
-                                          height: 30,
-                                            color:secondaryColor,
-                                            onPressed: () {
-                                              Navigator.pop(context);
-                                            },
-                                            child: const Text(
-                                              'Cancel',
-                                              style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.bold),
-                                            ))
-                                      ],
-                                    ));
-                          },
-                          child:const Text(
-                            'delete',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold),
-                          )),
-                    ),
-                    const SizedBox(
-                      width: 5.0,
-                    )
-                  ],
+                Text(
+                  '${cubit.tasksData.length} tasks',
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, color: Colors.white),
                 ),
 
                 //tasks list
@@ -149,10 +93,10 @@ class HomeLayout extends StatelessWidget {
                       child: cubit.tasksData.isEmpty
                           ?
                           //if there is no tasks
-                          Center(
+                          const Center(
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
-                                children: const [
+                                children: [
                                   Icon(
                                     Icons.checklist_rounded,
                                     color: Colors.grey,
